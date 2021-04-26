@@ -1,0 +1,44 @@
+{% load blog_tags %}
+{% load static %}
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>{% block title %}{% endblock %}</title>
+        <link href="{% static 'css/base.css' %}" rel='stylesheet'>
+        <style>
+            input {background-color: rgb(255, 255, 255); border: 2px solid black;}
+        </style>
+    </head>
+    <body>
+        <div id="content">
+            {% block content %}{% endblock %}
+        </div>
+        <div id="sidebar">
+            <h2>My blog</h2>
+            <p><a href="{% url 'blog:post_list' %}">This is my blog.</a> 
+                I've written {% total_posts %} posts so far!</p>
+            <p>Subscribe to my <a href="{% url 'blog:post_feed' %}">RSS</a> feed</p>
+            <h3>Latest posts.</h3>
+            {% show_latest_post 3 %}
+            
+            <h3>Most commented posts.</h3>
+            {% get_most_commented_posts as mcp %}
+            <ul>
+                {% for post in mcp %}
+                    <li>
+                        <a href="{{ post.get_absolute_url }}">{{ post.title }}</a> 
+                        has {{ post.comments.count }} 
+                        comment{{ post.comments.count|pluralize }}
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if index %}
+            <h3>Search for posts.</h3>
+            <form action="." method="get">
+                {{ form.as_p }}
+                <input type="submit" value="Search">
+            </form>
+            {% endif %}
+        </div>
+    </body>
+</html>
